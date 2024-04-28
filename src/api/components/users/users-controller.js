@@ -8,12 +8,31 @@ const { errorResponder, errorTypes } = require('../../../core/errors');
  * @param {object} next - Express route middlewares
  * @returns {object} Response object or pass an error to the next route
  */
+
 async function getUsers(request, response, next) {
   try {
-    const users = await usersService.getUsers();
-    return response.status(200).json(users);
+    const users = await usersService.getUsers(); 
+
+    const halaman = parseInt(request.query.page_number)
+    const batasan = parseInt(request.query.page_size)
+
+    const iawalan = (halaman -1) * batasan
+    const iakhiran = halaman * batasan
+    
+    const hasil = {}
+
+    hasil.page_number = halaman
+    hasil.page_size = batasan
+    hasil.count = users.length
+    hasil.total_pages = Math.ceil(users.length/batasan)
+    hasil.has_previous_page = (iawalan>0)
+    hasil.has_next_page = (iakhiran<users.length)
+    hasil.data = users.slice(iawalan,iakhiran)
+
+
+    return response.status(200).json(hasil);
   } catch (error) {
-    return next(error);
+    return next(error); 
   }
 }
 
@@ -188,6 +207,15 @@ async function changePassword(request, response, next) {
     return next(error);
   }
 }
+
+/**
+ * FUNGSI BARU MENGATASI PAGINATION
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+
 
 module.exports = {
   getUsers,
