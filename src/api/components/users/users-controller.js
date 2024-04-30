@@ -1,5 +1,6 @@
 const usersService = require('./users-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
+const { filter } = require('lodash');
 
 /**
  * Handle get user detail request
@@ -10,10 +11,48 @@ const { errorResponder, errorTypes } = require('../../../core/errors');
  */
 async function getUsers(request, response, next) {
   try {
-    const paginate = await paginatedData(request, response, next)
-    return response.status(200).json(paginate);
-  } catch (error) {
+    const searchParam = request.query.search;
+    let data;
+
+    if(searchParam){
+      data = await mencariuser(request, response, next);
+    }
+    else{
+      data = await paginatedData(request, response, next);
+    }
+
+    return response.status(200).json({ data });
+    
+  } 
+    catch (error) {
     return next(error); 
+  }
+}
+
+/**
+ * Get user detail
+ * @param {Object} filter
+ * @returns {Object}
+ */
+
+async function mencariuser(request, response, next){
+  try{
+    const searchParam = request.query.search;
+    const data = await usersService.getUsers();
+
+    const [penamaan, isinya] = searchParam.split(':');
+    const hasilPencarian = data.filter( user => {
+
+      const Judulnya = user[penamaan].toLowerCase();
+      const Isinya = isinya.toLowerCase();
+
+      return Judulnya.includes(Isinya);
+
+    });
+    return response.status(200).json(hasilPencarian);
+  }
+    catch (err) {
+    return null;
   }
 }
 
@@ -37,7 +76,7 @@ async function paginatedData (request, response, next){
     const iakhiran = halaman * batasan
     
     const hasil = {}
-
+    
     hasil.page_number = halaman
     hasil.page_size = batasan
     hasil.count = data.length
@@ -47,6 +86,7 @@ async function paginatedData (request, response, next){
     hasil.data = data.slice(iawalan,iakhiran)
 
     return response.status(200).json(hasil);
+
   } catch (error) {
     return next(error); 
   }
