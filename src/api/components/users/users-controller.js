@@ -2,6 +2,22 @@ const usersService = require('./users-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
 
 /**
+ * Handle get user detail request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function getUsers(request, response, next) {
+  try {
+    const paginate = await paginatedData(request, response, next)
+    return response.status(200).json(paginate);
+  } catch (error) {
+    return next(error); 
+  }
+}
+
+/**
  * Handle get list of users request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -9,9 +25,10 @@ const { errorResponder, errorTypes } = require('../../../core/errors');
  * @returns {object} Response object or pass an error to the next route
  */
 
-async function getUsers(request, response, next) {
-  try {
-    const users = await usersService.getUsers(); 
+async function paginatedData (request, response, next){
+  try{
+
+    const data = await usersService.getUsers();
 
     const halaman = parseInt(request.query.page_number)
     const batasan = parseInt(request.query.page_size)
@@ -23,12 +40,11 @@ async function getUsers(request, response, next) {
 
     hasil.page_number = halaman
     hasil.page_size = batasan
-    hasil.count = users.length
-    hasil.total_pages = Math.ceil(users.length/batasan)
+    hasil.count = data.length
+    hasil.total_pages = Math.ceil(data.length/batasan)
     hasil.has_previous_page = (iawalan>0)
-    hasil.has_next_page = (iakhiran<users.length)
-    hasil.data = users.slice(iawalan,iakhiran)
-
+    hasil.has_next_page = (iakhiran<data.length)
+    hasil.data = data.slice(iawalan,iakhiran)
 
     return response.status(200).json(hasil);
   } catch (error) {
