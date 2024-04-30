@@ -11,18 +11,20 @@ const { filter } = require('lodash');
  */
 async function getUsers(request, response, next) {
   try {
+    // melakukan deklarasi
     const searchParam = request.query.search;
     let data;
 
-    if(searchParam){
-      data = await mencariuser(request, response, next);
+    if(searchParam){ // kondisi dimana ketika terdapat parameter yang dimasukkan untuk dicari maka
+      // dilakukan pemanggilan fungsi filtering 
+      data = await mencaridata(request, response, next);
     }
-    else{
+    else{ // ketika tidak ada pemanggilan fungsi filtering maka
+      // dilakukan pemanngilan pagination untuk memunculkan data page
       data = await paginatedData(request, response, next);
     }
 
-    return response.status(200).json({ data });
-    
+    return response.status(200).json(data); // output
   } 
     catch (error) {
     return next(error); 
@@ -30,62 +32,71 @@ async function getUsers(request, response, next) {
 }
 
 /**
- * Get user detail
+ *  Handle filtering (mencaridata) detail request
  * @param {Object} filter
  * @returns {Object}
  */
 
-async function mencariuser(request, response, next){
+// FUNCTION UNTUK MELAKUKAN SEARCH/FILTER PADA DATA
+async function mencaridata(request, response, next){
   try{
+    // melakukan deklarasi dan mengambil data yang dibutuhkan
     const searchParam = request.query.search;
     const data = await usersService.getUsers();
 
-    const [penamaan, isinya] = searchParam.split(':');
-    const hasilPencarian = data.filter( user => {
+    const [penamaan, isinya] = searchParam.split(':');    // melakukan split untuk metode "penamaan":"nilai"
+    const hasilPencarian = data.filter( user => {         // filtering
 
-      const Judulnya = user[penamaan].toLowerCase();
-      const Isinya = isinya.toLowerCase();
+      const Judulnya = user[penamaan].toLowerCase();      // toLowerCase untuk menghilangkan perbedaan case
+      const Isinya = isinya.toLowerCase();                // supaya string berubah ke lower semua sehingga tidak ada error
+                                                          // karena perbedaan case
 
-      return Judulnya.includes(Isinya);
+      return Judulnya.includes(Isinya); // pembentukan untuk mencari data
 
     });
-    return response.status(200).json(hasilPencarian);
+    return response.status(200).json(hasilPencarian); // output
   }
     catch (err) {
     return null;
   }
 }
 
+
 /**
- * Handle get list of users request
+ * Handle pagination of users request (paginatedData)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
  * @returns {object} Response object or pass an error to the next route
  */
 
+// FUNCTION UNTUK MEMBUAT PAGE PADA DATA YANG TERTERA
 async function paginatedData (request, response, next){
   try{
 
+    // mengambil data
     const data = await usersService.getUsers();
 
     const halaman = parseInt(request.query.page_number)
     const batasan = parseInt(request.query.page_size)
 
+    // iawalan dan iakhiran berupa INDEX 
     const iawalan = (halaman -1) * batasan
     const iakhiran = halaman * batasan
     
+    // hanya melakukan deklarasi
     const hasil = {}
     
-    hasil.page_number = halaman
-    hasil.page_size = batasan
-    hasil.count = data.length
-    hasil.total_pages = Math.ceil(data.length/batasan)
-    hasil.has_previous_page = (iawalan>0)
-    hasil.has_next_page = (iakhiran<data.length)
-    hasil.data = data.slice(iawalan,iakhiran)
+    // menampilkan additional pada pagination untuk 
+    hasil.page_number = halaman  // halaman saat ini
+    hasil.page_size = batasan    // banyaknya data pada setiap halaman
+    hasil.count = data.length    // menghitung banyaknya data
+    hasil.total_pages = Math.ceil(data.length/batasan)    // menampilkan total halaman yang ada
+    hasil.has_previous_page = (iawalan>0)                 // boolean kondisi apakah ada page sebelumnya/tidak
+    hasil.has_next_page = (iakhiran<data.length)          // boolean kondisi apakah ada page setelahnya/tidak
+    hasil.data = data.slice(iawalan,iakhiran)             // membagi data sesuai dengan yang diminta
 
-    return response.status(200).json(hasil);
+    return response.status(200).json(hasil); // output
 
   } catch (error) {
     return next(error); 
