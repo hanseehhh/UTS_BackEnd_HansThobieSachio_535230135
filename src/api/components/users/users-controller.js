@@ -2,6 +2,7 @@ const usersService = require('./users-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
 const { filter } = require('lodash');
 
+
 /**
  * Handle get user detail request
  * @param {object} request - Express request object
@@ -12,14 +13,21 @@ const { filter } = require('lodash');
 async function getUsers(request, response, next) {
   try {
     // melakukan deklarasi
-    const searchParam = request.query.search;
+    const masukquery = request.query.search;
+    const doSort = request.query.sort;
     let data;
 
-    if(searchParam){ // kondisi dimana ketika terdapat parameter yang dimasukkan untuk dicari maka
+    if(masukquery){ // kondisi dimana ketika terdapat parameter yang dimasukkan untuk dicari maka
       // dilakukan pemanggilan fungsi filtering 
-      data = await mencaridata(request, response, next);
+      data = await mencaridata(request, response);
     }
-    else{ // ketika tidak ada pemanggilan fungsi filtering maka
+
+    if(doSort){
+      data = await doSorting(request, response)
+    }
+
+    else{ 
+      // ketika tidak ada pemanggilan fungsi filtering dan sorting maka
       // dilakukan pemanngilan pagination untuk memunculkan data page
       data = await paginatedData(request, response, next);
     }
@@ -31,6 +39,7 @@ async function getUsers(request, response, next) {
   }
 }
 
+
 /**
  *  Handle filtering (mencaridata) detail request
  * @param {Object} filter
@@ -38,26 +47,73 @@ async function getUsers(request, response, next) {
  */
 
 // FUNCTION UNTUK MELAKUKAN SEARCH/FILTER PADA DATA
-async function mencaridata(request, response, next){
+async function mencaridata(request, response){
   try{
     // melakukan deklarasi dan mengambil data yang dibutuhkan
-    const searchParam = request.query.search;
+    const masukquery = request.query.search;
     const data = await usersService.getUsers();
 
-    const [penamaan, isinya] = searchParam.split(':');    // melakukan split untuk metode "penamaan":"nilai"
-    const hasilPencarian = data.filter( user => {         // filtering
+    const [penamaan, isinya] = masukquery.split(':');    // melakukan split untuk metode "penamaan":"nilai"
+    const hasilPencarian = data.filter ( find => {         // filtering
 
-      const Judulnya = user[penamaan].toLowerCase();      // toLowerCase untuk menghilangkan perbedaan case
-      const Isinya = isinya.toLowerCase();                // supaya string berubah ke lower semua sehingga tidak ada error
-                                                          // karena perbedaan case
+      const Judulnya = find[penamaan];      
+      const Isinya = isinya;               
 
-      return Judulnya.includes(Isinya); // pembentukan untuk mencari data
-
+    return Judulnya.includes(Isinya); // pembentukan untuk mencari data
     });
     return response.status(200).json(hasilPencarian); // output
   }
     catch (err) {
     return null;
+  }
+}
+
+
+/**
+ * Handle sorting of users request 
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @returns {object} Response object or pass an error to the next route
+ */
+
+async function doSorting (request, response){
+  try{
+
+    const data = await usersService.getUsers();
+    const doSort = request.query.sort;
+    
+    const [penamaan, nilai] = doSort.split(':');
+    const hasil = data.sort((atasnya, bawahnya) => {
+
+      if (nilai === 'desc'){
+        if (atasnya[penamaan] > bawahnya[penamaan]){
+          return -1;
+        }
+
+        else{
+          return 0;
+        }
+      }
+
+      else if (nilai == 'asc'){
+        if (atasnya[penamaan] < bawahnya[penamaan]){
+          return -1;
+        }
+        
+        else{
+          return 0;
+        }
+      }
+
+      else{
+        return next(error);
+      } 
+  });
+     
+    return response.status(200).json(hasil);
+    }  
+      catch (err) {
+      return null;
   }
 }
 
@@ -73,7 +129,6 @@ async function mencaridata(request, response, next){
 // FUNCTION UNTUK MEMBUAT PAGE PADA DATA YANG TERTERA
 async function paginatedData (request, response, next){
   try{
-
     // mengambil data
     const data = await usersService.getUsers();
 
@@ -83,9 +138,14 @@ async function paginatedData (request, response, next){
     // iawalan dan iakhiran berupa INDEX 
     const iawalan = (halaman -1) * batasan
     const iakhiran = halaman * batasan
-    
+
     // hanya melakukan deklarasi
     const hasil = {}
+
+
+    if (halaman == 0 || batasan == 0){
+      return data
+    }
     
     // menampilkan additional pada pagination untuk 
     hasil.page_number = halaman  // halaman saat ini
