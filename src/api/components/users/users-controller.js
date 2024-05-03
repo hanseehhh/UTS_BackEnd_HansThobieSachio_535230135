@@ -151,7 +151,7 @@ async function getUsers(request, response, next) {
 
     // Kondisi hanya untuk menampilkan PAGINATION tanpa melakukan searching dan sorting (harus halaman dan batasan)
     else if(halaman&&batasan){                                               // halaman dan batasan adalah query page_size dan page_number
-      const paginate = await paginatedData (request, response, next);        // melakukan pemanggilan fungsi
+      const paginate = await paginatedData (request, response, next);        // melakukan pemanggilan fungsi (fungsi di bawah ini )
       return response.status(200).json(paginate);
     }
 
@@ -397,15 +397,6 @@ async function changePassword(request, response, next) {
     return next(error);
   }
 }
-
-/**
- * FUNGSI BARU MENGATASI PAGINATION
- * @param {object} request - Express request object
- * @param {object} response - Express response object
- * @param {object} next - Express route middlewares
- * @returns {object} Response object or pass an error to the next route
- */
-
 
 module.exports = {
   getUsers,
