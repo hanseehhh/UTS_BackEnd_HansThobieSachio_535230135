@@ -20,8 +20,8 @@ async function getUsers(request, response, next) {
     const halaman = parseInt(request.query.page_number)
     const batasan = parseInt(request.query.page_size)
 
-    const iawalan = {}
-    const iakhiran = {}
+    const iawalan = (halaman -1) * batasan
+    const iakhiran = halaman * batasan
     const hasil={}
 
 
@@ -66,13 +66,13 @@ async function getUsers(request, response, next) {
 
       
     });
-    hasil.page_number = 1 
-    hasil.page_size = nilai.length    
+    hasil.page_number = halaman
+    hasil.page_size = batasan    
     hasil.count = nilai.length
-    hasil.total_pages = Math.ceil(nilai.length/nilai.length)
+    hasil.total_pages = Math.ceil(nilai.length/batasan)
     hasil.has_previous_page = (iawalan>0)                 
     hasil.has_next_page = (iakhiran<nilai.length)
-    hasil.data = nilai
+    hasil.data = nilai.slice(iawalan, iakhiran)
     return response.status(200).json(hasil);
     }
 
