@@ -15,7 +15,10 @@ async function getUsers(request, response, next) {
     const users = await usersService.getUsers();
     const masukquery = request.query.search;
     const doSort = request.query.sort;
-    //const paginate = await paginatedData(request, response, next);
+
+
+    const halaman = parseInt(request.query.page_number)
+    const batasan = parseInt(request.query.page_size)
 
     const iawalan = {}
     const iakhiran = {}
@@ -96,6 +99,7 @@ async function getUsers(request, response, next) {
     }
 
 
+
     if(doSort){
       const data = await usersService.getUsers();
       const [penamaan, nilai] = doSort.split(':');
@@ -125,7 +129,6 @@ async function getUsers(request, response, next) {
           return next(error);
         } 
     });
-
     hasil.page_number = 1 
     hasil.page_size = final.length    
     hasil.count = final.length
@@ -136,10 +139,27 @@ async function getUsers(request, response, next) {
     return response.status(200).json(hasil);
     }
 
-    else{
+
+
+    else if(halaman&&batasan){
       const paginate = await paginatedData (request, response, next);
       return response.status(200).json(paginate);
     }
+
+    else{
+      hasil.page_number = 1 
+      hasil.page_size = users.length    
+      hasil.count = users.length
+      hasil.total_pages = Math.ceil(users.length/users.length)
+      hasil.has_previous_page = (iawalan>0)                 
+      hasil.has_next_page = (iakhiran<users.length)
+      hasil.data = users
+      return response.status(200).json(hasil);
+    }
+    
+
+
+    
 }
     catch (error) {
     return next(error); 
@@ -179,19 +199,20 @@ async function paginatedData (request, response, next){
       hasil.has_previous_page = (iawalan>0)                 
       hasil.has_next_page = (iakhiran<data.length)
       hasil.data = data
-      return hasil
+      return response.status(200).json(hasil);
     }
     
-    // menampilkan additional pada pagination untuk 
-    hasil.page_number = halaman  // halaman saat ini
-    hasil.page_size = batasan    // banyaknya data pada setiap halaman
-    hasil.count = data.length    // menghitung banyaknya data
-    hasil.total_pages = Math.ceil(data.length/batasan)    // menampilkan total halaman yang ada
-    hasil.has_previous_page = (iawalan>0)                 // boolean kondisi apakah ada page sebelumnya/tidak
-    hasil.has_next_page = (iakhiran<data.length)          // boolean kondisi apakah ada page setelahnya/tidak
-    hasil.data = data            // membagi data sesuai dengan yang diminta
-
-    return response.status(200).json(hasil); // output
+    else{
+      hasil.page_number = halaman  
+      hasil.page_size = batasan    
+      hasil.count = data.length    
+      hasil.total_pages = Math.ceil(data.length/batasan)   
+      hasil.has_previous_page = (iawalan>0)                 
+      hasil.has_next_page = (iakhiran<data.length)          
+      hasil.data = data.slice(iawalan,iakhiran)
+      return response.status(200).json(hasil); // outpu
+    }
+   t
 
   } catch (error) {
     return next(error); 
