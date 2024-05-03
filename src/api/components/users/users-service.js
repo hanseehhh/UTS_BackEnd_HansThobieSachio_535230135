@@ -9,22 +9,7 @@ const { result } = require('lodash');
  */
 async function getUsers() {
   const users = await usersRepository.getUsers();
-  const hasil = {}
-  // menampilkan additional pada pagination untuk
-  const halaman = {}
-  const batasan = {}
-  const iawalan = (halaman -1) * batasan
-  const iakhiran = halaman * batasan
-
-  hasil.page_number = 1 // halaman saat ini
-  hasil.page_size = users.length   // banyaknya data pada setiap halaman
-  hasil.count = users.length    // menghitung banyaknya data
-  hasil.total_pages = Math.ceil(users.length/users.length)    // menampilkan total halaman yang ada
-  hasil.has_previous_page = (iawalan>0)                 // boolean kondisi apakah ada page sebelumnya/tidak
-  hasil.has_next_page = (iakhiran<users.length)          // boolean kondisi apakah ada page setelahnya/tidak
-  const results = [
-    hasil
-  ];
+  const results = [];
   for (let i = 0; i < users.length; i += 1) {
     const user = users[i];
     results.push({

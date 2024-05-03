@@ -12,170 +12,123 @@ const { filter } = require('lodash');
  */
 async function getUsers(request, response, next) {
   try {
-    // melakukan deklarasi
-    const data = await usersService.getUsers();
-    // data.page_number = 1
+    const users = await usersService.getUsers();
+    const masukquery = request.query.search;
+    const doSort = request.query.sort;
 
-    // // const hasil = await mencaridata();
-    // const halaman = parseInt(request.query.page_number)
-    // const batasan = parseInt(request.query.page_size)
-                                     
+    const halaman = parseInt(request.query.page_number)
+    const batasan = parseInt(request.query.page_size)
 
-    // // iawalan dan iakhiran berupa INDEX 
-    // const iawalan = (halaman -1) * batasan
-    // const iakhiran = halaman * batasan
+    const iawalan = (halaman -1) * batasan
+    const iakhiran = halaman * batasan
+    const hasil={}
 
-    // const hasil = {}
+    hasil.page_number = halaman  
+    hasil.page_size = batasan    
+    hasil.count = users.length    
+    hasil.total_pages = Math.ceil(users.length/batasan)    
+    hasil.has_previous_page = (iawalan>0)                 
+    hasil.has_next_page = (iakhiran<users.length)          
+    hasil.data = users.slice(iawalan,iakhiran)             
 
-    // if (halaman == 0 || batasan == 0){
-    //   hasil.data = data
-    //   return response.status(200).json(hasil);
-    // }
-
-    // else{
-    // // menampilkan additional pada pagination untuk 
-    // hasil.page_number = halaman // halaman saat ini
-    // hasil.page_size = batasan   // banyaknya data pada setiap halaman
-    // hasil.count = data.length    // menghitung banyaknya data
-    // hasil.total_pages = Math.ceil(data.length/batasan)    // menampilkan total halaman yang ada
-    // hasil.has_previous_page = (iawalan>0)                 // boolean kondisi apakah ada page sebelumnya/tidak
-    // hasil.has_next_page = (iakhiran<data.length)          // boolean kondisi apakah ada page setelahnya/tidak
-    // hasil.data = data.slice(iawalan, iakhiran)
-    // }
     
+    // if(masukquery){
+    //   const data = await usersService.getUsers();
 
-    return response.status(200).json(data); // output
+    //   const [penamaan, isinya] = masukquery.split(':');
+    //   const hasilPencarian = data.filter ( find => {
+    //     const Judulnya = find[penamaan];      
+    //     const Isinya = isinya;        
+      
+    //     return Judulnya.includes(Isinya);
+    //   });
+    //   return response.status(200).json(hasilPencarian)
+    // }
+
+    // if(doSort){
+    //   const data = await usersService.getUsers();
+    //   const [penamaan, nilai] = doSort.split(':');
+    //   const hasil = data.sort((atasnya, bawahnya) => {
+
+    //     if (nilai === 'desc'){
+    //       if (atasnya[penamaan] > bawahnya[penamaan]){
+    //         return -1;
+    //       }
+
+    //       else{
+    //         return 0;
+    //       }
+    //     }
+
+    //     else if (nilai == 'asc'){
+    //       if (atasnya[penamaan] < bawahnya[penamaan]){
+    //         return -1;
+    //       }
+
+    //       else{
+    //         return 0;
+    //       }
+    //     }
+
+    //     else{
+    //       return next(error);
+    //     } 
+    // });
+
+    // return response.status(200).json(hasil);
+    // }
 
 
+    if(masukquery && doSort){
+      const masukquery = request.query.search;
+      const data = await usersService.getUsers();
+
+      const [penamaan, isinya] = masukquery.split(':');
+      const hasilCarian = data.filter( find => {
+        const Judulnya = find[penamaan];      
+        const Isinya = isinya;        
+        return Judulnya.includes(Isinya);
+      });
+
+      const doSort = request.query.sort;
+      const [nama, isi] = doSort.split(':');
+      const hasil = hasilCarian.sort((atasnya, bawahnya) => {
+
+        if (isi === 'desc'){
+          if (atasnya[nama] > bawahnya[nama]){
+            return -1;
+          }
+
+          else{
+            return 0;
+          }
+        }
+
+        else if (isi == 'asc'){
+          if (atasnya[nama] < bawahnya[nama]){
+            return -1;
+          }
+
+          else{
+            return 0;
+          }
+        }
+
+        else{
+          return next(error);
+        } 
+
+      
+    });
+    return response.status(200).json(hasilPencarian);
+    }
+
+    return response.status(200).json(hasil); // output
 }
     catch (error) {
     return next(error); 
   }
 }
-
-
-/**
- *  Handle filtering (mencaridata) detail request
- * @param {Object} filter
- * @returns {Object}
- */
-
-// FUNCTION UNTUK MELAKUKAN SEARCH/FILTER PADA DATA
-async function mencaridata(request, response){
-  try{
-    // melakukan deklarasi dan mengambil data yang dibutuhkan
-    const masukquery = request.query.search;
-    const data = await usersService.getUsers();
-
-    const [penamaan, isinya] = masukquery.split(':');    // melakukan split untuk metode "penamaan":"nilai"
-    const hasilPencarian = data.filter ( find => {         // filtering
-
-      const Judulnya = find[penamaan];      
-      const Isinya = isinya;               
-
-    return Judulnya.includes(Isinya); // pembentukan untuk mencari data
-    });
-    return response.status(200).json(hasilPencarian); // output
-  }
-    catch (err) {
-    return null;
-  }
-}
-
-
-/**
- * Handle sorting of users request 
- * @param {object} request - Express request object
- * @param {object} response - Express response object
- * @returns {object} Response object or pass an error to the next route
- */
-
-async function doSorting (request, response){
-  try{
-
-    const data = await usersService.getUsers();
-    const doSort = request.query.sort;
-    
-    const [penamaan, nilai] = doSort.split(':');
-    const hasil = data.sort((atasnya, bawahnya) => {
-
-      if (nilai === 'desc'){
-        if (atasnya[penamaan] > bawahnya[penamaan]){
-          return -1;
-        }
-
-        else{
-          return 0;
-        }
-      }
-
-      else if (nilai == 'asc'){
-        if (atasnya[penamaan] < bawahnya[penamaan]){
-          return -1;
-        }
-        
-        else{
-          return 0;
-        }
-      }
-
-      else{
-        return next(error);
-      } 
-  });
-     
-    return response.status(200).json(hasil);
-    }  
-      catch (err) {
-      return null;
-  }
-}
-
-
-/**
- * Handle pagination of users request (paginatedData)
- * @param {object} request - Express request object
- * @param {object} response - Express response object
- * @param {object} next - Express route middlewares
- * @returns {object} Response object or pass an error to the next route
- */
-
-// FUNCTION UNTUK MEMBUAT PAGE PADA DATA YANG TERTERA
-// async function paginatedData (request, response, next){
-//   try{
-//     // mengambil data
-//     const data = await usersService.getUsers();
-
-//     const halaman = parseInt(request.query.page_number)
-//     const batasan = parseInt(request.query.page_size)
-
-//     // iawalan dan iakhiran berupa INDEX 
-//     const iawalan = (halaman -1) * batasan
-//     const iakhiran = halaman * batasan
-
-//     // hanya melakukan deklarasi
-//     const hasil = {}
-
-
-//     if (halaman == 0 || batasan == 0){
-//       return data
-//     }
-    
-//     // menampilkan additional pada pagination untuk 
-//     hasil.page_number = halaman  // halaman saat ini
-//     hasil.page_size = batasan    // banyaknya data pada setiap halaman
-//     hasil.count = data.length    // menghitung banyaknya data
-//     hasil.total_pages = Math.ceil(data.length/batasan)    // menampilkan total halaman yang ada
-//     hasil.has_previous_page = (iawalan>0)                 // boolean kondisi apakah ada page sebelumnya/tidak
-//     hasil.has_next_page = (iakhiran<data.length)          // boolean kondisi apakah ada page setelahnya/tidak
-//     hasil.data = data.slice(iawalan,iakhiran)             // membagi data sesuai dengan yang diminta
-
-//     return response.status(200).json(hasil); // output
-
-//   } catch (error) {
-//     return next(error); 
-//   }
-// }
 
 /**
  * Handle get user detail request
