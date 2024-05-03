@@ -17,10 +17,8 @@ async function getUsers(request, response, next) {
     const doSort = request.query.sort;
     //const paginate = await paginatedData(request, response, next);
 
-    const halaman = parseInt(request.query.page_number)
-    const batasan = parseInt(request.query.page_size)
-    const iawalan = (halaman -1) * batasan
-    const iakhiran = halaman * batasan
+    const iawalan = {}
+    const iakhiran = {}
     const hasil={}
 
 
@@ -138,13 +136,10 @@ async function getUsers(request, response, next) {
     return response.status(200).json(hasil);
     }
 
-
     else{
-      
-      return response.status(200).json(users);
+      const paginate = await paginatedData (request, response, next);
+      return response.status(200).json(paginate);
     }
-
-     // output
 }
     catch (error) {
     return next(error); 
@@ -177,7 +172,14 @@ async function paginatedData (request, response, next){
 
 
     if (halaman == 0 || batasan == 0){
-      return data
+      hasil.page_number = 1 
+      hasil.page_size = data.length    
+      hasil.count = data.length
+      hasil.total_pages = Math.ceil(data.length/data.length)
+      hasil.has_previous_page = (iawalan>0)                 
+      hasil.has_next_page = (iakhiran<data.length)
+      hasil.data = data
+      return hasil
     }
     
     // menampilkan additional pada pagination untuk 
