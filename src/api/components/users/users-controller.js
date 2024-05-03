@@ -12,37 +12,50 @@ const { filter } = require('lodash');
  */
 async function getUsers(request, response, next) {
   try {
+    //Deklarasi 
     const users = await usersService.getUsers();
     const masukquery = request.query.search;
     const doSort = request.query.sort;
 
-
+    // Deklarasi untuk penggunaan URL (Dipakai untuk mempermudah melakukan if & else)
     const halaman = parseInt(request.query.page_number)
     const batasan = parseInt(request.query.page_size)
 
+    // Index
     const iawalan = (halaman -1) * batasan
     const iakhiran = halaman * batasan
     const hasil={}
 
 
+    //Kondisi Ketika Terdapat URL yang Search dan Sort Bersamaan + Penggunaan Page
     if(masukquery && doSort){     
-      const masukquery = request.query.search;
+      const masukquery = request.query.search;             // URL Dengan "SEARCH"
       const data = await usersService.getUsers();
 
-      const [penamaan, isinya] = masukquery.split(':');
-      const hasilCarian = data.filter( find => {
+      const [penamaan, isinya] = masukquery.split(':');    // Melakukan pemisahan dari bentuk email:test; menjadi email(penamaan) dan test(isinya)
+      const hasilCarian = data.filter( find => {           // Melakukan pencarian data sesuai yang diminta
         const Judulnya = find[penamaan];      
         const Isinya = isinya;        
         return Judulnya.includes(Isinya);
       });
 
-      const doSort = request.query.sort;
-      const [nama, isi] = doSort.split(':');
+      const doSort = request.query.sort;                   // URL Dengan "SORT"   
+      const [nama, isi] = doSort.split(':');               // Melakukan pemisahan dari bentuk email:test; menjadi email(nama) dan test(isi)
       const nilai = hasilCarian.sort((atasnya, bawahnya) => {
 
-        if (isi === 'desc'){
-          if (atasnya[nama] > bawahnya[nama]){
-            return -1;
+        if (isi === 'desc'){                              // Dikarenakan untuk melakukan sorting menggunakan STRINGS(input)
+          if (atasnya[nama] > bawahnya[nama]){            // Jika ATAS lebih besar daripada BAWAH terjadi perputaran
+            return -1;                                    // desc = descending; mengurutkan yang lebih besar terlebih dahulu
+          }
+
+          else{ 
+            return 0;                                     // jika kondisi sudah sesuai tidak perlu melakukan perputaran
+          }
+        }
+
+        else if (isi == 'asc'){                           // Dikarenakan untuk melakukan sorting menggunakan STRINGS(input)
+          if (atasnya[nama] < bawahnya[nama]){            // Jika ATAS lebih kecil daripada BAWAH terjadi perputaran
+            return -1;                                    // asc = ascending; mengurutkan yang lebih kecil terlebih dahulu
           }
 
           else{
@@ -50,78 +63,71 @@ async function getUsers(request, response, next) {
           }
         }
 
-        else if (isi == 'asc'){
-          if (atasnya[nama] < bawahnya[nama]){
-            return -1;
-          }
-
-          else{
-            return 0;
-          }
-        }
-
-        else{
-          return next(error);
+        else{                                             // Ketika penamaan tidak sesuai (asc atau desc) maka SORTING tidak terjadi
+          return next(error);                             
         } 
 
       
     });
-    hasil.page_number = halaman
+    // Memberikan detil paginati
+    hasil.page_number = halaman                   
     hasil.page_size = batasan    
     hasil.count = nilai.length
-    hasil.total_pages = Math.ceil(nilai.length/batasan)
-    hasil.has_previous_page = (iawalan>0)                 
-    hasil.has_next_page = (iakhiran<nilai.length)
-    hasil.data = nilai.slice(iawalan, iakhiran)
-    return response.status(200).json(hasil);
+    hasil.total_pages = Math.ceil(nilai.length/batasan)   // Math.ceil untuk pembulatan(ke atas) menjadi angka integer
+    hasil.has_previous_page = (iawalan>0)                 // Boolean
+    hasil.has_next_page = (iakhiran<nilai.length)         // Boolean
+    hasil.data = nilai.slice(iawalan, iakhiran)           // Slice untuk membagi data menjadi halaman
+    return response.status(200).json(hasil);             
     }
 
-                                
+    // Kondisi ketika ingin mencari data saja dari keseluruhan data                            
     if(masukquery){     
-      const data = await usersService.getUsers();
+      const data = await usersService.getUsers();         // Pengambilan Data Utuh(Polosan)
 
-      const [penamaan, isinya] = masukquery.split(':');
-      const hasilPencarian = data.filter ( find => {
+      const [penamaan, isinya] = masukquery.split(':');   // Melakukan pemisahan dari bentuk email:test; menjadi email(penamaan) dan test(isinya)
+      const hasilPencarian = data.filter ( find => {      // Melakukan pencarian data sesuai yang diminta
         const Judulnya = find[penamaan];      
         const Isinya = isinya;        
       
         return Judulnya.includes(Isinya);
       });
+      // Saya melakukan kondisi jika searching digabung pagination tidak memberikan fitur halaman
+      // Sehingga data tetap melakukan searching(filtering) namun hanya berada di 1 page (seperti default users)
 
-      hasil.page_number = 1 
-      hasil.page_size = hasilPencarian.length    
+      hasil.page_number = 1                               // Di-declare otomatis 1 dikarenakan hanya dimunculkan di 1 page
+      hasil.page_size = hasilPencarian.length             // Batasan menjadi sama seperti ukuran dari banyaknya data (tidak ada batasan di 1 halaman)
       hasil.count = hasilPencarian.length
-      hasil.total_pages = Math.ceil(hasilPencarian.length/hasilPencarian.length)
-      hasil.has_previous_page = (iawalan>0)                 
-      hasil.has_next_page = (iakhiran<hasilPencarian.length)
-      hasil.data = hasilPencarian
+      hasil.total_pages = Math.ceil(hasilPencarian.length/hasilPencarian.length)  // Math.ceil untuk pembulatan(ke atas) menjadi angka integer
+      hasil.has_previous_page = (iawalan>0)                                       // Boolean
+      hasil.has_next_page = (iakhiran<hasilPencarian.length)                      // Boolean
+      hasil.data = hasilPencarian                                                 // Tidak melakukan slice karena tidak ada paginate
       return response.status(200).json(hasil)
     }
 
 
-
+    // Kondisi ketika ingin mensorting saja dari keseluruhan data
     if(doSort){
-      const data = await usersService.getUsers();
-      const [penamaan, nilai] = doSort.split(':');
+      const data = await usersService.getUsers();       
+      const [penamaan, nilai] = doSort.split(':');        // Melakukan pemisahan dari bentuk email:test; menjadi email(nama) dan test(isi)
       const final = data.sort((atasnya, bawahnya) => {
 
-        if (nilai === 'desc'){
-          if (atasnya[penamaan] > bawahnya[penamaan]){
-            return -1;
+        if (nilai === 'desc'){                            // Dikarenakan untuk melakukan sorting menggunakan STRINGS(input)
+          if (atasnya[penamaan] > bawahnya[penamaan]){    // Jika ATAS lebih kecil daripada BAWAH terjadi perputaran
+            return -1;                                    // desc = descending; mengurutkan yang lebih besar terlebih dahulu
           }
 
           else{
-            return 0;
+            return 0;                                     // jika kondisi sudah sesuai tidak perlu melakukan perputaran
           }
         }
 
-        else if (nilai == 'asc'){
-          if (atasnya[penamaan] < bawahnya[penamaan]){
-            return -1;
+        else if (nilai == 'asc'){                         // Dikarenakan untuk melakukan sorting menggunakan STRINGS(input)
+          if (atasnya[penamaan] < bawahnya[penamaan]){    // Jika ATAS lebih kecil daripada BAWAH terjadi perputaran   
+            return -1;                                    // asc = ascending; mengurutkan yang lebih kecil terlebih dahulu
           }
 
           else{
-            return 0;
+            return 0;                                     // jika kondisi sudah sesuai tidak perlu melakukan perputaran
           }
         }
 
@@ -129,23 +135,27 @@ async function getUsers(request, response, next) {
           return next(error);
         } 
     });
-    hasil.page_number = 1 
-    hasil.page_size = final.length    
-    hasil.count = final.length
-    hasil.total_pages = Math.ceil(final.length/final.length)
-    hasil.has_previous_page = (iawalan>0)                 
-    hasil.has_next_page = (iakhiran<final.length)
-    hasil.data = final
+    // Saya melakukan kondisi jika sorting digabung pagination tidak memberikan fitur halaman
+    // Sehingga data tetap melakukan sorting(pengurutan) namun hanya berada di 1 page (seperti default users)
+
+    hasil.page_number = 1                                     // Di-declare otomatis 1 dikarenakan hanya dimunculkan di 1 page
+    hasil.page_size = final.length                            // Batasan menjadi sama seperti ukuran dari banyaknya data (tidak ada batasan di 1 halaman)
+    hasil.count = final.length                                
+    hasil.total_pages = Math.ceil(final.length/final.length)  // Math.ceil untuk pembulatan(ke atas) menjadi angka integer
+    hasil.has_previous_page = (iawalan>0)                     // Boolean
+    hasil.has_next_page = (iakhiran<final.length)             // Boolean
+    hasil.data = final                                        // Tidak melakukan slice karena tidak ada paginate
     return response.status(200).json(hasil);
     }
 
 
-
-    else if(halaman&&batasan){
-      const paginate = await paginatedData (request, response, next);
+    // Kondisi hanya untuk menampilkan PAGINATION tanpa melakukan searching dan sorting (harus halaman dan batasan)
+    else if(halaman&&batasan){                                               // halaman dan batasan adalah query page_size dan page_number
+      const paginate = await paginatedData (request, response, next);        // melakukan pemanggilan fungsi
       return response.status(200).json(paginate);
     }
 
+    // Kondisi untuk melakukan pemanggilan user default (GET /users)
     else{
       hasil.page_number = 1 
       hasil.page_size = users.length    
@@ -156,10 +166,6 @@ async function getUsers(request, response, next) {
       hasil.data = users
       return response.status(200).json(hasil);
     }
-    
-
-
-    
 }
     catch (error) {
     return next(error); 
@@ -177,11 +183,11 @@ async function getUsers(request, response, next) {
 // FUNCTION UNTUK MEMBUAT PAGE PADA DATA YANG TERTERA
 async function paginatedData (request, response, next){
   try{
-    // mengambil data
+    // Mengambil keseluruhan data users
     const data = await usersService.getUsers();
 
-    const halaman = parseInt(request.query.page_number)
-    const batasan = parseInt(request.query.page_size)
+    const halaman = parseInt(request.query.page_number)           // query untuk di URL berupa page_number
+    const batasan = parseInt(request.query.page_size)             // query untuk di URL berupa page_number
 
     // iawalan dan iakhiran berupa INDEX 
     const iawalan = (halaman -1) * batasan
@@ -191,7 +197,7 @@ async function paginatedData (request, response, next){
     const hasil = {}
 
 
-    if (halaman == 0 || batasan == 0){
+    if (halaman == 0 || batasan == 0){                            // Kondisi ketika halaman ataupun batasan di-input dengan 0
       hasil.page_number = 1 
       hasil.page_size = data.length    
       hasil.count = data.length
@@ -202,7 +208,7 @@ async function paginatedData (request, response, next){
       return response.status(200).json(hasil);
     }
     
-    else{
+    else{                                                         // Kondisi ketika halaman ataupun batasan di-input dengan sesuai (selain 0) 
       hasil.page_number = halaman  
       hasil.page_size = batasan    
       hasil.count = data.length    
