@@ -31,53 +31,6 @@ async function getUsers(request, response, next) {
     hasil.has_next_page = (iakhiran<users.length)          
     hasil.data = users.slice(iawalan,iakhiran)             
 
-    
-    // if(masukquery){
-    //   const data = await usersService.getUsers();
-
-    //   const [penamaan, isinya] = masukquery.split(':');
-    //   const hasilPencarian = data.filter ( find => {
-    //     const Judulnya = find[penamaan];      
-    //     const Isinya = isinya;        
-      
-    //     return Judulnya.includes(Isinya);
-    //   });
-    //   return response.status(200).json(hasilPencarian)
-    // }
-
-    // if(doSort){
-    //   const data = await usersService.getUsers();
-    //   const [penamaan, nilai] = doSort.split(':');
-    //   const hasil = data.sort((atasnya, bawahnya) => {
-
-    //     if (nilai === 'desc'){
-    //       if (atasnya[penamaan] > bawahnya[penamaan]){
-    //         return -1;
-    //       }
-
-    //       else{
-    //         return 0;
-    //       }
-    //     }
-
-    //     else if (nilai == 'asc'){
-    //       if (atasnya[penamaan] < bawahnya[penamaan]){
-    //         return -1;
-    //       }
-
-    //       else{
-    //         return 0;
-    //       }
-    //     }
-
-    //     else{
-    //       return next(error);
-    //     } 
-    // });
-
-    // return response.status(200).json(hasil);
-    // }
-
 
     if(masukquery && doSort){
       const masukquery = request.query.search;
@@ -120,7 +73,54 @@ async function getUsers(request, response, next) {
 
       
     });
-    return response.status(200).json(hasilPencarian);
+    return response.status(200).json(hasil);
+    }
+
+                                
+    if(masukquery){
+      const data = await usersService.getUsers();
+
+      const [penamaan, isinya] = masukquery.split(':');
+      const hasilPencarian = data.filter ( find => {
+        const Judulnya = find[penamaan];      
+        const Isinya = isinya;        
+      
+        return Judulnya.includes(Isinya);
+      });
+      return response.status(200).json(hasilPencarian)
+    }
+
+    if(doSort){
+      const data = await usersService.getUsers();
+      const [penamaan, nilai] = doSort.split(':');
+      const hasil = data.sort((atasnya, bawahnya) => {
+
+        if (nilai === 'desc'){
+          if (atasnya[penamaan] > bawahnya[penamaan]){
+            return -1;
+          }
+
+          else{
+            return 0;
+          }
+        }
+
+        else if (nilai == 'asc'){
+          if (atasnya[penamaan] < bawahnya[penamaan]){
+            return -1;
+          }
+
+          else{
+            return 0;
+          }
+        }
+
+        else{
+          return next(error);
+        } 
+    });
+
+    return response.status(200).json(hasil);
     }
 
     return response.status(200).json(hasil); // output
