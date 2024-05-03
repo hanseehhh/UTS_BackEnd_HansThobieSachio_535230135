@@ -15,24 +15,16 @@ async function getUsers(request, response, next) {
     const users = await usersService.getUsers();
     const masukquery = request.query.search;
     const doSort = request.query.sort;
+    //const paginate = await paginatedData(request, response, next);
 
     const halaman = parseInt(request.query.page_number)
     const batasan = parseInt(request.query.page_size)
-
     const iawalan = (halaman -1) * batasan
     const iakhiran = halaman * batasan
     const hasil={}
 
-    hasil.page_number = halaman  
-    hasil.page_size = batasan    
-    hasil.count = users.length    
-    hasil.total_pages = Math.ceil(users.length/batasan)    
-    hasil.has_previous_page = (iawalan>0)                 
-    hasil.has_next_page = (iakhiran<users.length)          
-    hasil.data = users.slice(iawalan,iakhiran)             
 
-
-    if(masukquery && doSort){
+    if(masukquery && doSort){     
       const masukquery = request.query.search;
       const data = await usersService.getUsers();
 
@@ -45,7 +37,7 @@ async function getUsers(request, response, next) {
 
       const doSort = request.query.sort;
       const [nama, isi] = doSort.split(':');
-      const hasil = hasilCarian.sort((atasnya, bawahnya) => {
+      const nilai = hasilCarian.sort((atasnya, bawahnya) => {
 
         if (isi === 'desc'){
           if (atasnya[nama] > bawahnya[nama]){
@@ -73,11 +65,18 @@ async function getUsers(request, response, next) {
 
       
     });
+    hasil.page_number = 1 
+    hasil.page_size = nilai.length    
+    hasil.count = nilai.length
+    hasil.total_pages = Math.ceil(nilai.length/nilai.length)
+    hasil.has_previous_page = (iawalan>0)                 
+    hasil.has_next_page = (iakhiran<nilai.length)
+    hasil.data = nilai
     return response.status(200).json(hasil);
     }
 
                                 
-    if(masukquery){
+    if(masukquery){     
       const data = await usersService.getUsers();
 
       const [penamaan, isinya] = masukquery.split(':');
@@ -87,13 +86,22 @@ async function getUsers(request, response, next) {
       
         return Judulnya.includes(Isinya);
       });
-      return response.status(200).json(hasilPencarian)
+
+      hasil.page_number = 1 
+      hasil.page_size = hasilPencarian.length    
+      hasil.count = hasilPencarian.length
+      hasil.total_pages = Math.ceil(hasilPencarian.length/hasilPencarian.length)
+      hasil.has_previous_page = (iawalan>0)                 
+      hasil.has_next_page = (iakhiran<hasilPencarian.length)
+      hasil.data = hasilPencarian
+      return response.status(200).json(hasil)
     }
+
 
     if(doSort){
       const data = await usersService.getUsers();
       const [penamaan, nilai] = doSort.split(':');
-      const hasil = data.sort((atasnya, bawahnya) => {
+      const final = data.sort((atasnya, bawahnya) => {
 
         if (nilai === 'desc'){
           if (atasnya[penamaan] > bawahnya[penamaan]){
@@ -120,15 +128,74 @@ async function getUsers(request, response, next) {
         } 
     });
 
+    hasil.page_number = 1 
+    hasil.page_size = final.length    
+    hasil.count = final.length
+    hasil.total_pages = Math.ceil(final.length/final.length)
+    hasil.has_previous_page = (iawalan>0)                 
+    hasil.has_next_page = (iakhiran<final.length)
+    hasil.data = final
     return response.status(200).json(hasil);
     }
 
-    return response.status(200).json(hasil); // output
+
+    else{
+      
+      return response.status(200).json(users);
+    }
+
+     // output
 }
     catch (error) {
     return next(error); 
   }
 }
+
+/**
+ * Handle pagination of users request (paginatedData)
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+
+// FUNCTION UNTUK MEMBUAT PAGE PADA DATA YANG TERTERA
+async function paginatedData (request, response, next){
+  try{
+    // mengambil data
+    const data = await usersService.getUsers();
+
+    const halaman = parseInt(request.query.page_number)
+    const batasan = parseInt(request.query.page_size)
+
+    // iawalan dan iakhiran berupa INDEX 
+    const iawalan = (halaman -1) * batasan
+    const iakhiran = halaman * batasan
+
+    // hanya melakukan deklarasi
+    const hasil = {}
+
+
+    if (halaman == 0 || batasan == 0){
+      return data
+    }
+    
+    // menampilkan additional pada pagination untuk 
+    hasil.page_number = halaman  // halaman saat ini
+    hasil.page_size = batasan    // banyaknya data pada setiap halaman
+    hasil.count = data.length    // menghitung banyaknya data
+    hasil.total_pages = Math.ceil(data.length/batasan)    // menampilkan total halaman yang ada
+    hasil.has_previous_page = (iawalan>0)                 // boolean kondisi apakah ada page sebelumnya/tidak
+    hasil.has_next_page = (iakhiran<data.length)          // boolean kondisi apakah ada page setelahnya/tidak
+    hasil.data = data            // membagi data sesuai dengan yang diminta
+
+    return response.status(200).json(hasil); // output
+
+  } catch (error) {
+    return next(error); 
+  }
+}
+
 
 /**
  * Handle get user detail request
