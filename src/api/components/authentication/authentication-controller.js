@@ -19,19 +19,18 @@ async function login(request, response, next) {
     );
 
     if (!loginSuccess) {
-      if(!loginSuccess >= 5){
-        return response.status(403).json({
-          error: 
-          'Too many failed login attemp'
-        });
-      }
+      // throw errorResponder(
+      //   errorTypes.INVALID_CREDENTIALS,
+      //   'Wrong email or password'
+      // );
+      
       throw errorResponder(
-        errorTypes.INVALID_CREDENTIALS,
-        'Wrong email or password'
+        errorTypes.FORBIDDEN,
+        'gagal login', [email],
       );
     }
 
-    return response.status(200).json(loginSuccess);
+    
   } catch (error) {
     return next(error);
   }
@@ -40,3 +39,4 @@ async function login(request, response, next) {
 module.exports = {
   login,
 };
+
