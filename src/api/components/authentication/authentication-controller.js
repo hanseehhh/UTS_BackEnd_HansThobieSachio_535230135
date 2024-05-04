@@ -19,6 +19,12 @@ async function login(request, response, next) {
     );
 
     if (!loginSuccess) {
+      if(!loginSuccess >= 5){
+        return response.status(403).json({
+          error: 
+          'Too many failed login attemp'
+        });
+      }
       throw errorResponder(
         errorTypes.INVALID_CREDENTIALS,
         'Wrong email or password'
