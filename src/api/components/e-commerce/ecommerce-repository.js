@@ -51,7 +51,6 @@ async function updateProduct(id, name, description, price, stock) {
     {
       $set: {
         name,
-        email,
         description,
         price,
         stock,
