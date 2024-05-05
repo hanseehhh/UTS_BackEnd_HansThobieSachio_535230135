@@ -1,7 +1,7 @@
 const { Ecommerce } = require('../../../models');
 
 /**
- * Get a list of users
+ * Mendapatkan Data Utuh Dari Product
  * @returns {Promise}
  */
 async function getProducts() {
@@ -9,7 +9,7 @@ async function getProducts() {
 }
 
 /**
- * Get user detail
+ * Mendapatkan Data Dari Product (by ID)
  * @param {string} id - Product ID
  * @returns {Promise}
  */
@@ -18,7 +18,7 @@ async function getProduct(id) {
 }
 
 /**
- * Create new user
+ * Membuat Product Baru
  * @param {string} name - Name
  * @param {string} description - Deskripsi Product
  * @param {integer} price - Harga Product
@@ -35,7 +35,7 @@ async function createProduct(name, description, price, stock) {
 }
 
 /**
- * Update existing user
+ * Meng-Update Product yang Sudah Ada
  * @param {string} id - User ID
  * @param {string} name - Name
  * @param {string} description - Deskripsi
@@ -61,7 +61,7 @@ async function updateProduct(id, name, description, price, stock) {
 }
 
 /**
- * Delete a Product
+ * Delete Product Yang Sudah Ada
  * @param {string} id - User ID
  * @returns {Promise}
  */

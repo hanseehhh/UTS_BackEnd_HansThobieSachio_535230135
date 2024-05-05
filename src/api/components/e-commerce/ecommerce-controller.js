@@ -1,12 +1,10 @@
 const ecommerceService = require('./ecommerce-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
-const { filter } = require('lodash');
-
 
 
 
 /**
- * Mengambil Data Product
+ * Mengambil Data Product Dari Service (yang Valid)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -26,7 +24,7 @@ async function getProducts(request, response, next){
 
 
 /**
- * Handle get user detail request
+ * Mengambil Product Dengan id Dari Service
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -47,7 +45,7 @@ async function getProduct(request, response, next) {
 }
 
 /**
- * Handle create user request
+ * Membuat Product Baru (Bisa Membuat Product Yang Sama lebih dari 1)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -75,7 +73,7 @@ async function createProduct(request, response, next) {
 }
 
 /**
- * Handle update user request
+ * Mengatasi Perubahan Dari Product (Bisa Update Berkali-Kali)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -104,7 +102,7 @@ async function updateProduct(request, response, next) {
 }
 
 /**
- * Handle delete user request
+ * Mengatasi Penghapusan(Delete) Product 
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares

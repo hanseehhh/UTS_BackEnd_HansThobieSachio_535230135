@@ -1,8 +1,10 @@
 const ecommerceRepository = require('./ecommerce-repository');
-const { hashPassword, passwordMatched } = require('../../../utils/password');
-const { User } = require('../../../models');
-const { result } = require('lodash');
 
+
+/**
+ * MENDAPATKAN LIST DARI PRODUCT BERUPA
+ * @returns {Array}
+ */
 async function getProducts() {
   const products = await ecommerceRepository.getProducts();
 
@@ -21,7 +23,11 @@ async function getProducts() {
   return results;
 }
 
-
+/**
+ * MENDAPATKAN DETIL DARI PRODUCT (BY ID)
+ * @param {string} id - Product ID
+ * @returns {Object}
+ */
 async function getProduct(id){
   const product = await ecommerceRepository.getProduct(id);
 
@@ -40,8 +46,8 @@ async function getProduct(id){
 }
 
 /**
- * Create New Product
- * @param {string} name - Name
+ * MEMBUAT PRODUCT BARU
+ * @param {string} name - Product Name
  * @param {string} description - Deskripsi
  * @param {string} price - Harga Product
  * @param {string} stock - Stock Product
@@ -60,12 +66,12 @@ async function createProduct(name, description, price, stock) {
 }
 
 /**
- * Update existing user
- * @param {string} id - User ID
- * @param {string} name - Name
- * @param {string} description - Deskripsi
- * @param {string} price - Harga
- * @param {string} stock - Stock
+ * MEMPERBAHARUI (UPDATE) PRODUCT YANG SUDAH ADA
+ * @param {string} id - Product ID
+ * @param {string} name - Product Name
+ * @param {string} description - Deskripsi Product
+ * @param {string} price - Harga  Product
+ * @param {string} stock - Stock  Product
  * @returns {boolean}
  */
 async function updateProduct(id, name, description, price, stock) {
@@ -86,8 +92,8 @@ async function updateProduct(id, name, description, price, stock) {
 }
 
 /**
- * Delete user
- * @param {string} id - User ID
+ * MENGHAPUS (DELETE) PRODUCT YANG SUDAH ADA
+ * @param {string} id - Product ID
  * @returns {boolean}
  */
 async function deleteProduct(id) {
