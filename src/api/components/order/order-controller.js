@@ -79,9 +79,10 @@ async function createOrder(request, response, next) {
 async function updateOrder(request, response, next) {
   try {
     const id = request.params.id;
+    const name = request.params.name;
     const quantity = request.body.quantity;
 
-    const success = await orderService.updateOrder(id, quantity);
+    const success = await orderService.updateOrder(id, name, quantity);
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
@@ -89,7 +90,7 @@ async function updateOrder(request, response, next) {
       );
     }
 
-    return response.status(200).json({id, quantity, message: 'Pesanan Berhasil Di Perbaharui'});
+    return response.status(200).json({id, name, quantity, message: 'Pesanan Berhasil Di Perbaharui'});
   } catch (error) {
     return next(error);
   }
