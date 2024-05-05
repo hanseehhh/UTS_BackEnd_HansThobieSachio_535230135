@@ -43,23 +43,24 @@ async function getProduct(id){
  * Create New Product
  * @param {string} name - Name
  * @param {string} description - Deskripsi
- * @param {integer} price - Harga Product
- * @param {integer} stock - Stock Product
+ * @param {string} price - Harga Product
+ * @param {string} stock - Stock Product
  * @returns {boolean}
  */
 async function createProduct(name, description, price, stock) {
 
   try {
     await ecommerceRepository.createProduct(name, description, price, stock);
+
   } 
     catch (err) {
     return null;
     }
-  return 'Produk Berhasil Ditambahkan';
+  return true;
 }
-
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
+
 };

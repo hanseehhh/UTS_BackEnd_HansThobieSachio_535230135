@@ -2,44 +2,38 @@ const express = require('express');
 
 const authenticationMiddleware = require('../../middlewares/authentication-middleware');
 const celebrate = require('../../../core/celebrate-wrappers');
-const ecommerceController = require('./ecommerce-controller');
-const eccomerceValidator = require('./ecommerce-validator');
+const ecommerceControllers = require('./ecommerce-controller');
+const ecommerceValidator = require('./ecommerce-validator');
 
 const route = express.Router();
 
 module.exports = (app) => {
-  app.use('/users', route);
+  app.use('/product', route);
 
-  // Get list of users
-  route.get('/', authenticationMiddleware, ecommerceController.getProducts);
+  // Get list of Product
+  route.get('/', authenticationMiddleware, ecommerceControllers.getProducts);
 
-  // Create user
+  // Create Product
   route.post(
     '/',
     authenticationMiddleware,
-    celebrate(eccomerceValidator.createProduct),
-    ecommerceController.createProduct
+    celebrate(ecommerceValidator.createProduct),
+    ecommerceControllers.createProduct
   );
 
-  // // Get user detail
-  // route.get('/:id', authenticationMiddleware, usersControllers.getUser);
+  // Get Product detail
+  // route.get('/:id', authenticationMiddleware, ecommerceControllers.geProducts);
 
-  // // Update user
+  // //Update user
   // route.put(
   //   '/:id',
   //   authenticationMiddleware,
-  //   celebrate(usersValidator.updateUser),
-  //   usersControllers.updateUser
+  //   celebrate(ecommerceValidator.updateProduct),
+  //   ecommerceControllers.updateProduct
   // );
 
   // // Delete user
-  // route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser);
+  // route.delete('/:id', authenticationMiddleware, ecommerceControllers.deleteProduct);
 
-  // // Change password
-  // route.post(
-  //   '/:id/change-password',
-  //   authenticationMiddleware,
-  //   celebrate(usersValidator.changePassword),
-  //   usersControllers.changePassword
-  // );
+
 };

@@ -1,6 +1,7 @@
 const joi = require('joi');
-const { Ecommerce } = require('../../../models/ecommerce-schema');
-
+const { joiPasswordExtendCore } = require('joi-password');
+const { description } = require('../../../models/ecommerce-schema');
+const joiPassword = joi.extend(joiPasswordExtendCore);
 
 module.exports = {
   createProduct: {
@@ -8,7 +9,16 @@ module.exports = {
       name: joi.string().min(1).max(100).required().label('Name'),
       description: joi.string().max(500).required().label('Description'),
       price: joi.number().integer().required().label('Price'),
-      stock: joi.number().integer().required().label('Stock'),
+      stock: joi.number().required().label('Stock'),
     },
   },
+
+  // updateUser: {
+  //   body: {
+  //     name: joi.string().min(1).max(100).required().label('Name'),
+  //     description: joi.string().max(500).required().label('Description'),
+  //     price: joi.number().integer().required().label('Price'),
+  //     stock: joi.number().required().label('Stock'),
+  //   },
+  // },
 };

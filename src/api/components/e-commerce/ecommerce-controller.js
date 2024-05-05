@@ -15,7 +15,7 @@ const { filter } = require('lodash');
 
 async function getProducts(request, response, next){
   try {
-    const products = await ecommerceService.getProduct();
+    const products = await ecommerceService.getProducts();
 
     return response.status(200).json(products);
   }
@@ -69,7 +69,7 @@ async function createProduct(request, response, next) {
       );
     }
 
-    return response.status(200).json(success);
+    return response.status(200).json({ name, description, price, stock });
   } catch (error) {
     return next(error);
   }
