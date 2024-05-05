@@ -10,10 +10,11 @@ const route = express.Router();
 module.exports = (app) => {
   app.use('/order', route);
 
-  // ROUTE UNTUK MELAKUKAN GET /PRODUCT
+  // ROUTE UNTUK MELAKUKAN GET /ORDER
   route.get('/', authenticationMiddleware, orderController.getOrderd);
 
-  //ROUTE UNTUK MELAKUKAN PERUBAHAN PRODUCT POST /PRODUCT
+
+  //ROUTE UNTUK MELAKUKAN PERUBAHAN Pesanan POST /ORDER
   route.post(
     '/',
     authenticationMiddleware,
@@ -21,10 +22,12 @@ module.exports = (app) => {
     orderController.createOrder
   );
 
-  // ROUTE UNTUK MELAKUKAN GET DATA BY ID GET /PRODUCT/ID
+
+  // ROUTE UNTUK MELAKUKAN GET DATA BY ID GET /ORDER/ID
   route.get('/:id', authenticationMiddleware, orderController.getOrder);
 
-  // ROUTE UNTUK MELAKUKAN UPDATE PADA PRODUCT PUT /PRODUCT/ID
+
+  // ROUTE UNTUK MELAKUKAN UPDATE PADA Pesanan PUT /ORDER/ID
   route.put(
     '/:id',
     authenticationMiddleware,
@@ -32,7 +35,8 @@ module.exports = (app) => {
     orderController.updateOrder
   );
 
-  // // ROUTE UNTUK MENGHAPUS PRODUCT DELETE /PRODUCT/ID
+  
+  // // ROUTE UNTUK MENGHAPUS Pesana DELETE /ORDER/ID
   route.delete('/:id', authenticationMiddleware, orderController.deleteOrder);
 
 

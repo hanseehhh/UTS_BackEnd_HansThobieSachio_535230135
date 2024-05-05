@@ -3,7 +3,7 @@ const { errorResponder, errorTypes } = require('../../../core/errors');
 
 
 /**
- * Handle get list of users request
+ * Menampilkan List Dari GetOrder Yang Telah Dibentuk
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -19,8 +19,9 @@ async function getOrderd(request, response, next) {
   }
 }
 
+
 /**
- * Mengambil Product Dengan id Dari Service
+ * Mengambil Data Order(dengan Lacak ID)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -40,8 +41,9 @@ async function getOrder(request, response, next) {
   }
 }
 
+
 /**
- * Membuat Product Baru (Bisa Membuat Product Yang Sama lebih dari 1)
+ * Membuat Pesanan Baru (Bisa Membuat Pesanan Yang Sama lebih dari 1)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -66,8 +68,9 @@ async function createOrder(request, response, next) {
   }
 }
 
+
 /**
- * Mengatasi Perubahan Dari Product (Bisa Update Berkali-Kali)
+ * Mengatasi Perubahan Dari Pesanan (Bisa Update Berkali-Kali)
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -94,7 +97,7 @@ async function updateOrder(request, response, next) {
 
 
 /**
- * Mengatasi Penghapusan(Delete) Product 
+ * Mengatasi Penghapusan(Delete) Pesanan 
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares

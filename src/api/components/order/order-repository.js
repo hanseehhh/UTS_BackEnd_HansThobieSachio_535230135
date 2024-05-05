@@ -1,7 +1,7 @@
 const { Order } = require('../../../models');
 
 /**
- * Mendapatkan Data Utuh Dari Product
+ * Mendapatkan Data Utuh Dari Order
  * @returns {Promise}
  */
 async function getOrderd() {
@@ -9,8 +9,8 @@ async function getOrderd() {
 }
 
 /**
- * Mendapatkan Data Dari Product (by ID)
- * @param {string} id - Product ID
+ * Mendapatkan Data Dari Order (by ID)
+ * @param {string} id - Order ID
  * @returns {Promise}
  */
 async function getOrder(id) {
@@ -18,8 +18,8 @@ async function getOrder(id) {
 }
 
 /**
- * Membuat Product Baru
- * @param {string} name - Name
+ * Membuat Pesanan Baru
+ * @param {string} name - Name Pesanan
  * @param {string} quantity - Jumlah Pesanan
  * @returns {Promise}
  */
@@ -31,9 +31,9 @@ async function createOrder(name, quantity) {
 }
 
 /**
- * Meng-Update Product yang Sudah Ada
- * @param {string} id - User ID
- * @param {string} name - Name
+ * Meng-Update Pesanan yang Sudah Ada
+ * @param {string} id - Order ID
+ * @param {string} name - Name Pesanan
  * @param {string} quantity - Jumlah Pesanan
  * @returns {Promise}
  */
@@ -52,8 +52,8 @@ async function updateOrder(id, name, quantity) {
 }
 
 /**
- * Delete Product Yang Sudah Ada
- * @param {string} id - User ID
+ * Delete Pesaan Yang Sudah Dibentuk
+ * @param {string} id - Order ID
  * @returns {Promise}
  */
 async function deleteOrder(id) {

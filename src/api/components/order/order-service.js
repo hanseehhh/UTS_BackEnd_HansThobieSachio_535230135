@@ -2,7 +2,7 @@ const { quantity } = require('../../../models/order-schema');
 const orderRepository = require('./order-repository');
 
 /**
- * MENDAPATKAN LIST DARI PRODUCT BERUPA
+ * MENDAPATKAN LIST DARI ORDER BERUPA ARRAY
  * @returns {Array}
  */
 async function getOrderd() {
@@ -21,8 +21,9 @@ async function getOrderd() {
   return results;
 }
 
+
 /**
- * MENDAPATKAN DETIL DARI PRODUCT (BY ID)
+ * MENDAPATKAN DETIL DARI ORDER (BY ID)
  * @param {string} id - Product ID
  * @returns {Object}
  */
@@ -41,8 +42,9 @@ async function getOrder(id){
   };
 }
 
+
 /**
- * MEMBUAT PRODUCT BARU
+ * MEMBUAT PESANAN BARU
  * @param {string} name - Product Name
  * @param {string} description - Deskripsi
  * @param {string} price - Harga Product
@@ -61,8 +63,9 @@ async function createOrder(name, quantity) {
   return true;
 }
 
+
 /**
- * MEMPERBAHARUI (UPDATE) PRODUCT YANG SUDAH ADA
+ * MEMPERBAHARUI (UPDATE) PESANAN YANG SUDAH ADA
  * @param {string} id - Product ID
  * @param {string} name - Product Name
  * @param {string} quantity - Jumlah Pesanan
@@ -85,8 +88,9 @@ async function updateOrder(id, name, quantity) {
   return true;
 }
 
+
 /**
- * MENGHAPUS (DELETE) PRODUCT YANG SUDAH ADA
+ * MENGHAPUS (DELETE) PESANAN YANG SUDAH ADA
  * @param {string} id - Product ID
  * @returns {boolean}
  */
@@ -106,6 +110,7 @@ async function deleteOrder(id) {
 
   return true;
 }
+
 
 module.exports = {
   getOrderd,
