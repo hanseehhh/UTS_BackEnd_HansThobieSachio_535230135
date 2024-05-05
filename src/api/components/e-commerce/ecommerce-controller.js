@@ -16,7 +16,7 @@ const { filter } = require('lodash');
 async function getProducts(request, response, next){
   try {
     const products = await ecommerceService.getProduct();
-  
+
     return response.status(200).json(products);
   }
     catch (error) {
@@ -61,7 +61,7 @@ async function createProduct(request, response, next) {
     const price = request.body.price;
     const stock = request.body.stock;
 
-    const success = await ecommerceService.createUser(name, description, price, stock);
+    const success = await ecommerceService.createProduct(name, description, price, stock);
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
@@ -69,72 +69,14 @@ async function createProduct(request, response, next) {
       );
     }
 
-    return response.status(200).json({ name, description, price, stock });
+    return response.status(200).json(success);
   } catch (error) {
     return next(error);
   }
 }
-
-
-/**
- * Handle update user request
- * @param {object} request - Express request object
- * @param {object} response - Express response object
- * @param {object} next - Express route middlewares
- * @returns {object} Response object or pass an error to the next route
- */
-async function updateProduct(request, response, next) {
-  try {
-    const id = request.params.id;
-    const description = request.body.description;
-    const price = request.body.price;
-    const stock = request.body.stock;
-
-
-    const success = await usersService.updateUser(id, description, price, stock);
-    if (!success) {
-      throw errorResponder(
-        errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to update Product'
-      );
-    }
-
-    return response.status(200).json({ id });
-  } catch (error) {
-    return next(error);
-  }
-}
-
-/**
- * Handle delete user request
- * @param {object} request - Express request object
- * @param {object} response - Express response object
- * @param {object} next - Express route middlewares
- * @returns {object} Response object or pass an error to the next route
- */
-async function deleteProduct(request, response, next) {
-  try {
-    const id = request.params.id;
-
-    const success = await ecommerceService.deleteProduct(id);
-    if (!success) {
-      throw errorResponder(
-        errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to delete Product'
-      );
-    }
-
-    return response.status(200).json({ id });
-  } catch (error) {
-    return next(error);
-  }
-}
-
 
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
-  updateProduct,
-  deleteProduct,
 };

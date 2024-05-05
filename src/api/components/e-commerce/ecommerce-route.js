@@ -2,38 +2,44 @@ const express = require('express');
 
 const authenticationMiddleware = require('../../middlewares/authentication-middleware');
 const celebrate = require('../../../core/celebrate-wrappers');
-const ecommerceControllers = require('./ecommerce-controller');
-const ecommerceValidator = require('./ecommerce-validator');
+const ecommerceController = require('./ecommerce-controller');
+const eccomerceValidator = require('./ecommerce-validator');
 
 const route = express.Router();
 
 module.exports = (app) => {
-  app.use('/product', route);
+  app.use('/users', route);
 
-  // Get list of Product
-  route.get('/', authenticationMiddleware, ecommerceControllers.getProducts);
+  // Get list of users
+  route.get('/', authenticationMiddleware, ecommerceController.getProducts);
 
-  // Create Product
+  // Create user
   route.post(
     '/',
     authenticationMiddleware,
-    celebrate(ecommerceValidator.createProduct),
-    ecommerceControllers.createProduct
+    celebrate(eccomerceValidator.createProduct),
+    ecommerceController.createProduct
   );
 
-  // Get Product detail
-  // route.get('/:id', authenticationMiddleware, ecommerceControllers.geProducts);
+  // // Get user detail
+  // route.get('/:id', authenticationMiddleware, usersControllers.getUser);
 
-  //Update user
-  route.put(
-    '/:id',
-    authenticationMiddleware,
-    celebrate(ecommerceValidator.updateProduct),
-    ecommerceControllers.updateProduct
-  );
+  // // Update user
+  // route.put(
+  //   '/:id',
+  //   authenticationMiddleware,
+  //   celebrate(usersValidator.updateUser),
+  //   usersControllers.updateUser
+  // );
 
-  // Delete user
-  route.delete('/:id', authenticationMiddleware, ecommerceControllers.deleteProduct);
+  // // Delete user
+  // route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser);
 
-
+  // // Change password
+  // route.post(
+  //   '/:id/change-password',
+  //   authenticationMiddleware,
+  //   celebrate(usersValidator.changePassword),
+  //   usersControllers.changePassword
+  // );
 };

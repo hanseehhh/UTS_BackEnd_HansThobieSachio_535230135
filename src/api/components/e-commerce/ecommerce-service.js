@@ -43,76 +43,23 @@ async function getProduct(id){
  * Create New Product
  * @param {string} name - Name
  * @param {string} description - Deskripsi
- * @param {string} price - Harga Product
- * @param {string} stock - Stock Product
+ * @param {integer} price - Harga Product
+ * @param {integer} stock - Stock Product
  * @returns {boolean}
  */
 async function createProduct(name, description, price, stock) {
 
   try {
     await ecommerceRepository.createProduct(name, description, price, stock);
-
   } 
     catch (err) {
     return null;
     }
-  return true;
+  return 'Produk Berhasil Ditambahkan';
 }
-
-
-/**
- * Update existing user
- * @param {string} id - User ID
- * @param {string} name - Name
- * @param {string} description - Deskripsi
- * @param {string} price - Harga
- * @param {string} stock - Stock
- * @returns {boolean}
- */
-async function updateProduct(id, name, description, price, stock) {
-  const product = await ecommerceRepository.getProduct(id);
-
-  // User not found
-  if (!product) {
-    return null;
-  }
-
-  try {
-    await ecommerceRepository.updateProduct(id, name, description, price, stock);
-  } catch (err) {
-    return null;
-  }
-
-  return true;
-}
-
-/**
- * Delete user
- * @param {string} id - User ID
- * @returns {boolean}
- */
-async function deleteProduct(id) {
-  const product = await ecommerceRepository.getProduct(id);
-
-  // User not found
-  if (!product) {
-    return null;
-  }
-
-  try {
-    await ecommerceRepository.deleteProduct(id);
-  } catch (err) {
-    return null;
-  }
-
-  return true;
-}
-
 
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
-  updateProduct,
-  deleteProduct,
 };
