@@ -33,7 +33,7 @@ async function login(request, response, next) {
     // KONDISI DIMANA JIKA USER TERUS LOGIN WALAU MASIH TERKENA TIMEOUT
     if (lockedUntil && lockedUntil > Date.now()) {
       throw errorResponder(
-        errorTypes.INVALID_CREDENTIALS,
+        errorTypes.FORBIDDEN,
         `[${year}-${month}-${day} ${hours}:${minutes}:${seconds}] User ${email} telah terkunci hingga 30 menit kemudian` 
       );
     }
@@ -68,7 +68,7 @@ async function login(request, response, next) {
       
       attempts++;                                                     // Tambahkan upaya login jika gagal
       throw errorResponder(                                           // Kembalikan pesan kesalahan jika mencoba login lebih dari 5 kali
-        errorTypes.INVALID_CREDENTIALS,
+        errorTypes.FORBIDDEN,
         `[${year}-${month}-${day} ${hours}:${minutes}:${seconds}] User ${email} gagal login. Attempt = ${attempts}`
       );
     }
