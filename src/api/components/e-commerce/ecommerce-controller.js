@@ -46,7 +46,6 @@ async function getProduct(request, response, next) {
   }
 }
 
-
 /**
  * Handle create user request
  * @param {object} request - Express request object
@@ -75,8 +74,38 @@ async function createProduct(request, response, next) {
   }
 }
 
+/**
+ * Handle update user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function updateProduct(request, response, next) {
+  try {
+    const id = request.params.id;
+    const description = request.body.description;
+    const price = request.body.price;
+    const stock = request.body.stock;
+
+
+    const success = await usersService.updateUser(id, description, price, stock);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to update Product'
+      );
+    }
+
+    return response.status(200).json({ id });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
+  updateProduct,
 };

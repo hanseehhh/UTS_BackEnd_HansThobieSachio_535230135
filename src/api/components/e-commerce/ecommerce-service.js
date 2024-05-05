@@ -58,9 +58,37 @@ async function createProduct(name, description, price, stock) {
     }
   return true;
 }
+
+/**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} name - Name
+ * @param {string} description - Deskripsi
+ * @param {string} price - Harga
+ * @param {string} stock - Stock
+ * @returns {boolean}
+ */
+async function updateProduct(id, name, description, price, stock) {
+  const product = await ecommerceRepository.getProduct(id);
+
+  // User not found
+  if (!product) {
+    return null;
+  }
+
+  try {
+    await ecommerceRepository.updateProduct(id, name, description, price, stock);
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
+  updateProduct,
 
 };

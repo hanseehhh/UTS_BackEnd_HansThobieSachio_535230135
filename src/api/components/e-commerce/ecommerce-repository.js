@@ -34,8 +34,35 @@ async function createProduct(name, description, price, stock) {
   });
 }
 
+/**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} name - Name
+ * @param {string} description - Deskripsi
+ * @param {string} price - Harga
+ * @param {string} stock - Stok Product
+ * @returns {Promise}
+ */
+async function updateProduct(id, name, description, price, stock) {
+  return Product.updateOne(
+    {
+      _id: id,
+    },
+    {
+      $set: {
+        name,
+        email,
+        description,
+        price,
+        stock,
+      },
+    }
+  );
+}
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
+  updateProduct,
 };

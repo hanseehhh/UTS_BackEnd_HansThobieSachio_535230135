@@ -24,13 +24,13 @@ module.exports = (app) => {
   // Get Product detail
   // route.get('/:id', authenticationMiddleware, ecommerceControllers.geProducts);
 
-  // //Update user
-  // route.put(
-  //   '/:id',
-  //   authenticationMiddleware,
-  //   celebrate(ecommerceValidator.updateProduct),
-  //   ecommerceControllers.updateProduct
-  // );
+  //Update user
+  route.put(
+    '/id',
+    authenticationMiddleware,
+    celebrate(ecommerceValidator.updateProduct),
+    ecommerceControllers.updateProduct
+  );
 
   // // Delete user
   // route.delete('/:id', authenticationMiddleware, ecommerceControllers.deleteProduct);
