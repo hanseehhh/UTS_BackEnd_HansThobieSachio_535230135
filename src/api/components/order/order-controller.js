@@ -86,7 +86,7 @@ async function updateOrder(request, response, next) {
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to update Product'
+        'Gagal Untuk Meng-Update Product'
       );
     }
 
@@ -112,7 +112,7 @@ async function deleteOrder(request, response, next) {
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to delete Product'
+        'Gagal Untuk Menghapus Product'
       );
     }
 
