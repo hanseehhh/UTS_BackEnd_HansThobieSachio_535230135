@@ -44,7 +44,7 @@ async function createProduct(name, description, price, stock) {
  * @returns {Promise}
  */
 async function updateProduct(id, name, description, price, stock) {
-  return Product.updateOne(
+  return Ecommerce.updateOne(
     {
       _id: id,
     },
@@ -60,9 +60,19 @@ async function updateProduct(id, name, description, price, stock) {
   );
 }
 
+/**
+ * Delete a Product
+ * @param {string} id - User ID
+ * @returns {Promise}
+ */
+async function deleteProduct(id) {
+  return Ecommerce.deleteOne({id});
+}
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
   updateProduct,
+  deleteProduct,
 };

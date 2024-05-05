@@ -26,14 +26,14 @@ module.exports = (app) => {
 
   //Update user
   route.put(
-    '/id',
+    '/:id',
     authenticationMiddleware,
     celebrate(ecommerceValidator.updateProduct),
     ecommerceControllers.updateProduct
   );
 
-  // // Delete user
-  // route.delete('/:id', authenticationMiddleware, ecommerceControllers.deleteProduct);
+  // Delete user
+  route.delete('/:id', authenticationMiddleware, ecommerceControllers.deleteProduct);
 
 
 };

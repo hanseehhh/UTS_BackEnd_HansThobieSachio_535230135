@@ -85,10 +85,34 @@ async function updateProduct(id, name, description, price, stock) {
   return true;
 }
 
+/**
+ * Delete user
+ * @param {string} id - User ID
+ * @returns {boolean}
+ */
+async function deleteProduct(id) {
+  const product = await ecommerceRepository.getProduct(id);
+
+  // User not found
+  if (!product) {
+    return null;
+  }
+
+  try {
+    await ecommerceRepository.deleteProduct(id);
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
   updateProduct,
+  deleteProduct,
 
 };

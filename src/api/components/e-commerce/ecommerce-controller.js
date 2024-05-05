@@ -89,11 +89,36 @@ async function updateProduct(request, response, next) {
     const stock = request.body.stock;
 
 
-    const success = await usersService.updateUser(id, description, price, stock);
+    const success = await ecommerceService.updateProduct(id, description, price, stock);
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
         'Failed to update Product'
+      );
+    }
+
+    return response.status(200).json({id, description, price, stock});
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
+ * Handle delete user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function deleteProduct(request, response, next) {
+  try {
+    const id = request.params.id;
+
+    const success = await ecommerceService.deleteProduct(id);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to delete Product'
       );
     }
 
@@ -108,4 +133,5 @@ module.exports = {
   getProduct,
   createProduct,
   updateProduct,
+  deleteProduct,
 };
