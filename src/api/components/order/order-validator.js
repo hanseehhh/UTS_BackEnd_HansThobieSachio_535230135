@@ -1,22 +1,19 @@
 const joi = require('joi');
+const { updateOrder, createOrder } = require('./order-repository');
 
 
 module.exports = {
-  createProduct: {
+  createOrder: {
     body: {
       name: joi.string().min(1).max(100).required().label('Name'),
-      description: joi.string().max(500).required().label('Description'),
-      price: joi.number().integer().required().label('Price'),
-      stock: joi.number().required().label('Stock'),
+      quantity: joi.number().integer().required().label('Quantity'),
     },
   },
 
-  updateProduct: {
+  updateOrder: {
     body: {
       name: joi.string().min(1).max(100).required().label('Name'),
-      description: joi.string().max(500).required().label('Description'),
-      price: joi.number().integer().required().label('Price'),
-      stock: joi.number().integer().required().label('Stock'),
+      quantity: joi.number().integer().required().label('Quantity'),
     },
   },
 };
