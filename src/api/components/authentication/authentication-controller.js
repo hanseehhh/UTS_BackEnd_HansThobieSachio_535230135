@@ -68,7 +68,7 @@ async function login(request, response, next) {
       
       attempts++;                                                     // Tambahkan upaya login jika gagal
       throw errorResponder(                                           // Kembalikan pesan kesalahan jika mencoba login lebih dari 5 kali
-        errorTypes.FORBIDDEN,
+        errorTypes.INVALID_PASSWORD,
         `[${year}-${month}-${day} ${hours}:${minutes}:${seconds}] User ${email} gagal login. Attempt = ${attempts}`
       );
     }
