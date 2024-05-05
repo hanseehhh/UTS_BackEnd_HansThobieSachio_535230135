@@ -66,7 +66,7 @@ async function updateProduct(id, name, description, price, stock) {
  * @returns {Promise}
  */
 async function deleteProduct(id) {
-  return Ecommerce.deleteOne({id});
+  return Ecommerce.deleteOne({_id: id });
 }
 
 module.exports = {

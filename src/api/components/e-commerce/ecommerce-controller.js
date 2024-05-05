@@ -68,7 +68,7 @@ async function createProduct(request, response, next) {
       );
     }
 
-    return response.status(200).json({ name, description, price, stock });
+    return response.status(200).json({ name, description, price, stock, message: 'Product Berhasil Di Buat' });
   } catch (error) {
     return next(error);
   }
@@ -97,7 +97,7 @@ async function updateProduct(request, response, next) {
       );
     }
 
-    return response.status(200).json({id, description, price, stock});
+    return response.status(200).json({id, description, price, stock, message: 'Product Berhasil Di Perbaharui'});
   } catch (error) {
     return next(error);
   }
@@ -122,7 +122,7 @@ async function deleteProduct(request, response, next) {
       );
     }
 
-    return response.status(200).json({ id });
+    return response.status(200).json({ id, message: 'Product Berhasil Di Hapus'});
   } catch (error) {
     return next(error);
   }
