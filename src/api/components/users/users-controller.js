@@ -69,7 +69,9 @@ async function getUsers(request, response, next) {
 
       
     });
-    // Memberikan detil paginati
+
+    if(halaman && batasan){
+      // Memberikan detil paginati
     hasil.page_number = halaman                   
     hasil.page_size = batasan    
     hasil.count = nilai.length
@@ -77,7 +79,21 @@ async function getUsers(request, response, next) {
     hasil.has_previous_page = (iawalan>0)                 // Boolean
     hasil.has_next_page = (iakhiran<nilai.length)         // Boolean
     hasil.data = nilai.slice(iawalan, iakhiran)           // Slice untuk membagi data menjadi halaman
-    return response.status(200).json(hasil);             
+    return response.status(200).json(hasil);    
+    }
+
+    else{
+      // Memberikan detil paginati
+    hasil.page_number = halaman                   
+    hasil.page_size = batasan    
+    hasil.count = nilai.length
+    hasil.total_pages = Math.ceil(nilai.length/batasan)   // Math.ceil untuk pembulatan(ke atas) menjadi angka integer
+    hasil.has_previous_page = (iawalan>0)                 // Boolean
+    hasil.has_next_page = (iakhiran<nilai.length)         // Boolean
+    hasil.data = nilai
+    return response.status(200).json(hasil);    
+    }
+             
     }
 
     // Kondisi ketika ingin mencari data saja dari keseluruhan data                            
